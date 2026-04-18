@@ -1,0 +1,54 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  ai:
+    # enable the Ollama chat model (default is ollama so this is optional)
+    model:
+      chat: ollama
+      embedding: ollama
+
+    ollama:
+      base-url: http://localhost:11434
+      init:
+        # automatically pull models that are missing the first time they are requested
+        pull-model-strategy: when_missing   # never / when_missing / always
+        timeout: 5m
+        max-retries: 0
+      chat:
+        options:
+          model: llama3.2:1b
+          temperature: 0.7
+      embedding:
+        options:
+          # 1536-dimension embedding model to match DB schema
+          model: mxbai-embed-large
+
+  application:
+    name: bookreader-backend
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME:neondb_owner}
+    password: ${DB_PASSWORD:<password>}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
